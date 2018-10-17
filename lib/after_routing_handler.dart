@@ -26,12 +26,17 @@ class AfterRoutingHandler {
   apiUpdate<DataType>({
     @required bool fetchData,
     @required Future<DataType> apiFuture,
-    @required Function(Error) apiErrorCallback,
+    @required Function() apiErrorCallback,
     @required Function(DataType) updateDataDelegate,
   }) {
     if (!fetchData) return;
-    apiFuture.then((data) => _apiEnd(updateDataDelegate, data),
-        onError: apiErrorCallback);
+    apiFuture.then((data) {
+      if (data == null) {
+        _apiEnd(apiErrorCallback, StateError("Api failed."));
+      } else {
+        _apiEnd(updateDataDelegate, data);
+      }
+    }, onError: (e) => null);
   }
 
   _apiEnd(Function callback, dynamic data) {

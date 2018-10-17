@@ -14,10 +14,10 @@ void main() {
     when(pageState.mounted).thenReturn(true);
     var routeDuration =
         CupertinoPageRoute(builder: (context) {}).transitionDuration;
-    var startTime = DateTime.now().millisecond;
+    var startTime = DateTime.now().millisecondsSinceEpoch;
     print("start at: $startTime\n");
     var successCallback = expectAsync1<void, bool>((data) {
-      var now = DateTime.now().millisecond;
+      var now = DateTime.now().millisecondsSinceEpoch;
       print(
           " now: $now\n start: $startTime\n duration: ${routeDuration.inMilliseconds}");
       assert(now >= startTime + routeDuration.inMilliseconds);
@@ -26,7 +26,7 @@ void main() {
       ..apiUpdate(
         fetchData: true,
         apiFuture: apiFuture(true, 100),
-        apiErrorCallback: (error) {
+        apiErrorCallback: () {
           assert(false);
         },
         updateDataDelegate: successCallback,
@@ -39,14 +39,14 @@ void main() {
         CupertinoPageRoute(builder: (context) {}).transitionDuration;
     var startTime = DateTime.now();
     var callback = expectAsync1<void, bool>((data) {
-      assert(DateTime.now().millisecond >=
-          startTime.millisecond + routeDuration.inMilliseconds);
+      assert(DateTime.now().millisecondsSinceEpoch >=
+          startTime.millisecondsSinceEpoch + routeDuration.inMilliseconds);
     }, count: 1);
     AfterRoutingHandler(pageState: pageState, duration: routeDuration)
       ..apiUpdate(
         fetchData: true,
         apiFuture: apiFuture(true, 500),
-        apiErrorCallback: (error) {
+        apiErrorCallback: () {
           assert(false);
         },
         updateDataDelegate: callback,
