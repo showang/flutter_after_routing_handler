@@ -14,10 +14,13 @@ void main() {
     when(pageState.mounted).thenReturn(true);
     var routeDuration =
         CupertinoPageRoute(builder: (context) {}).transitionDuration;
-    var startTime = DateTime.now();
-    var callback = expectAsync1<void, bool>((data) {
-      assert(DateTime.now().millisecond >=
-          startTime.millisecond + routeDuration.inMilliseconds);
+    var startTime = DateTime.now().millisecond;
+    print("start at: $startTime\n");
+    var successCallback = expectAsync1<void, bool>((data) {
+      var now = DateTime.now().millisecond;
+      print(
+          " now: $now\n start: $startTime\n duration: ${routeDuration.inMilliseconds}");
+      assert(now >= startTime + routeDuration.inMilliseconds);
     }, count: 1);
     AfterRoutingHandler(pageState: pageState, duration: routeDuration)
       ..apiUpdate(
@@ -26,7 +29,7 @@ void main() {
         apiErrorCallback: (error) {
           assert(false);
         },
-        updateDataDelegate: callback,
+        updateDataDelegate: successCallback,
       );
   });
   test('Fetched data after routing finished.', () {
@@ -51,7 +54,7 @@ void main() {
   });
 }
 
-Future<bool> apiFuture(bool out,int duration) async {
+Future<bool> apiFuture(bool out, int duration) async {
   sleep(const Duration(milliseconds: 100));
   return out;
 }

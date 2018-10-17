@@ -30,11 +30,8 @@ class AfterRoutingHandler {
     @required Function(DataType) updateDataDelegate,
   }) {
     if (!fetchData) return;
-    try {
-      apiFuture.then((data) => _apiEnd(updateDataDelegate, data));
-    } catch (e) {
-      _apiEnd(apiErrorCallback, e);
-    }
+    apiFuture.then((data) => _apiEnd(updateDataDelegate, data),
+        onError: apiErrorCallback);
   }
 
   _apiEnd(Function callback, dynamic data) {
