@@ -1,6 +1,6 @@
 name: after_routing_handler
 description: Helps yout to update api data after route animation.
-version: 0.0.1
+version: 0.0.2
 author: showang <showang730@gmail.com>
 homepage: https://github.com/showang/flutter_after_routing_handler
 
