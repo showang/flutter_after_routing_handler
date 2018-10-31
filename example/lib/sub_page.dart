@@ -5,8 +5,6 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:easy_listview/easy_listview.dart';
-
 class SubPage extends StatefulWidget {
   final Duration pageTransitionDuration;
 
@@ -29,11 +27,10 @@ class SubPageState extends State<SubPage> {
       }).catchError((error) {});
     }
     return Scaffold(
-      body: EasyListView(
-        headerBuilder: (context) {},
-        itemCount: urlList.length,
-        itemBuilder: (context, index) {},
+      appBar: AppBar(
+        title: Text("Sub Page (Normal)"),
       ),
+      body: buildGridView(urlList),
     );
   }
 }
@@ -54,17 +51,25 @@ class SubPageWithHandlerState extends State<SubPage> {
       appBar: AppBar(
         title: Text("Sub Page (with Handler)"),
       ),
-      body: GridView.builder(
-          itemCount: urlList.length,
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200.0),
-          itemBuilder: (context, index) => FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: urlList[index],
-              )),
+      body: buildGridView(urlList),
     );
   }
 }
+
+Widget buildGridView(List<String> urlList) => urlList.isEmpty
+    ? Container(
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
+    : GridView.builder(
+        itemCount: urlList.length,
+        gridDelegate:
+            SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 200.0),
+        itemBuilder: (context, index) => FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: urlList[index],
+            ));
 
 Future<List<String>> imageUrlFuture() async {
   sleep(Duration(milliseconds: Random().nextInt(50)));

@@ -1,7 +1,6 @@
 import 'package:example/sub_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,15 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var route = CupertinoPageRoute(builder: (_) => null);
 
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Audio(
-      child: Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text("Example"),
         ),
@@ -59,7 +50,5 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
+      );
 }
