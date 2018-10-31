@@ -19,14 +19,14 @@ void main() {
       var now = DateTime.now().millisecondsSinceEpoch;
       assert(now >= startTime + routeDuration.inMilliseconds);
     }, count: 1);
-    AfterRoutingHandler(pageState: pageState, duration: routeDuration)
-      ..apiUpdate(
-        fetchData: true,
-        apiFuture: apiFuture(true, 100),
-        apiErrorCallback: (error) {
+    AfterRoutingHandler(pageState, transitionDuration: routeDuration)
+      ..scheduleFuture(
+        apiFuture(true, 100),
+        shouldInvoke: true,
+        errorCallback: (error) {
           assert(false);
         },
-        updateDataDelegate: successCallback,
+        successDelegate: successCallback,
       );
   });
   test('Fetched data after routing finished.', () {
@@ -39,14 +39,14 @@ void main() {
       assert(DateTime.now().millisecondsSinceEpoch >=
           startTime.millisecondsSinceEpoch + routeDuration.inMilliseconds);
     }, count: 1);
-    AfterRoutingHandler(pageState: pageState, duration: routeDuration)
-      ..apiUpdate(
-        fetchData: true,
-        apiFuture: apiFuture(true, 500),
-        apiErrorCallback: (error) {
+    AfterRoutingHandler(pageState, transitionDuration: routeDuration)
+      ..scheduleFuture(
+        apiFuture(true, 500),
+        shouldInvoke: true,
+        errorCallback: (error) {
           assert(false);
         },
-        updateDataDelegate: callback,
+        successDelegate: callback,
       );
   });
 }

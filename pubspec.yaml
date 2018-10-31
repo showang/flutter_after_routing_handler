@@ -1,6 +1,6 @@
 name: after_routing_handler
 description: Helps yout to update api data after route animation.
-version: 0.1.0
+version: 0.1.1
 author: showang <showang730@gmail.com>
 homepage: https://github.com/showang/flutter_after_routing_handler
 
@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  tuple: ^1.0.2
+  transparent_image: ^0.1.0
 
 dev_dependencies:
   flutter_test:

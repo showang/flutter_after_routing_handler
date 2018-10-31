@@ -1,46 +1,72 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 class AfterRoutingHandler {
-  State pageState;
+  State currentState;
   bool _animationEnd = false;
-  Map<Function, dynamic> _funcDataMap = {};
 
-  bool get _unmounted => !pageState.mounted;
+  Map<Function(dynamic), dynamic> _callbackFuncDataMap = {};
 
-  AfterRoutingHandler({
-    @required this.pageState,
-    @required Duration duration,
+  List<Function> _taskCallbackList = [];
+
+  Map<Future<dynamic>, Tuple2<ValueSetter<dynamic>, void Function(dynamic)>>
+      _pendingFuture = {};
+
+  bool get _unmounted => !currentState.mounted;
+
+  AfterRoutingHandler(
+    this.currentState, {
+    Duration transitionDuration = const Duration(),
   }) {
-    Timer(Duration(milliseconds: duration.inMilliseconds + 50), () {
+    Timer(Duration(milliseconds: transitionDuration.inMilliseconds + 50), () {
+      _animationEnd = true;
       if (_unmounted) return;
-      if (_funcDataMap.isEmpty) {
-        _animationEnd = true;
-      } else {
-        _funcDataMap.forEach((func, data) => func(data));
+      if (_callbackFuncDataMap.isNotEmpty) {
+        _callbackFuncDataMap.forEach((func, data) => func(data));
+      }
+      if (_taskCallbackList.isNotEmpty) {
+        _taskCallbackList.forEach((func) => func());
+      }
+      if (_pendingFuture.isNotEmpty) {
+        _pendingFuture.forEach((future, callbacks) {
+          future
+              .then((data) => callbacks.item1(data))
+              .catchError((e) => callbacks.item2(e));
+        });
       }
     });
   }
 
-  apiUpdate<DataType>({
-    @required bool fetchData,
-    @required Future<DataType> apiFuture,
-    @required void Function(dynamic) apiErrorCallback,
-    @required void Function(DataType) updateDataDelegate,
+  scheduleFuture<DataType>(
+    Future<DataType> future, {
+    bool shouldInvoke: true,
+    bool runImmediately: true,
+    @required void Function(dynamic) errorCallback,
+    @required ValueSetter<DataType> successDelegate,
   }) {
-    if (!fetchData) return;
-    apiFuture
-        .then((data) => _apiEnd(updateDataDelegate, data))
-        .catchError((e) => _apiEnd(apiErrorCallback, e));
+    if (!shouldInvoke) return;
+    if (runImmediately) {
+      future
+          .then((data) => _whenFutureFinished(successDelegate, data))
+          .catchError((e) => _whenFutureFinished(errorCallback, e));
+    } else {
+      _pendingFuture[future] = Tuple2(successDelegate, errorCallback);
+    }
   }
 
-  _apiEnd(Function callback, dynamic data) {
-    if (_unmounted) return;
+  schedule<DataType>(VoidCallback task, {bool shouldInvoke: true}) {
+    if (!shouldInvoke) return;
+    _taskCallbackList.add(task);
+  }
+
+  _whenFutureFinished(Function callback, dynamic data) {
+    if (_unmounted || callback == null) return;
     if (_animationEnd) {
       callback(data);
     } else {
-      _funcDataMap[callback] = data;
+      _callbackFuncDataMap[callback] = data;
     }
   }
 }

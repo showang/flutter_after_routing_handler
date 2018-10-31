@@ -2,7 +2,7 @@
 
 # after_routing_handler
 
-Helps you to update api data after route animation.
+Helps you to schedule tasks after route transition animation.
 
 ## Getting Started
 
